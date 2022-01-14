@@ -9,21 +9,23 @@ byte vibrate = 0;
 void setup() {
     Serial.begin(57600);
 
-    error = ps2x.config_gamepad(13, 11, 10, 12, true,true);  // setup pins and settings:  GamePad(clock, command, attention,  data, Pressures?, Rumble?) check for error
-    if (error == 0) {
+    // 设置PS2控制引脚
+    error = ps2x.config_gamepad(13, 11, 10, 12, true,true);  // setup pins and settings:  GamePad(clock, command, attention,  data, Pressures?, Rumble?) 
+    if (error == 0) { // 成功
         Serial.println("Found Controller, configured successful");
         Serial.println("Try out all the buttons, X will vibrate the controller, faster as you press harder;");
         Serial.println("holding L1 or R1 will print out the analog stick values.");
         Serial.println("Go to [url]www.billporter.info[/url] for updates and to report bugs.");
-    } else if (error == 1)
+    } else if (error == 1){ // 未找到控制器，请检查接线
         Serial.println("No controller found, check wiring, see readme.txt to enable debug. visit [url]www.billporter.info[/url] for troubleshooting tips");
-    else if (error == 2)
+    }else if (error == 2){  // 找到控制器但不接受命令
         Serial.println("Controller found but not accepting commands. see readme.txt to enable debug. Visit [url]www.billporter.info[/url] for troubleshooting tips");
-    else if (error == 3)
+    }else if (error == 3){  // 控制器拒绝进入压力模式，可能不支持
         Serial.println("Controller refusing to enter Pressures mode, may not support it. ");
-
+    }
     // Serial.print(ps2x.Analog(1), HEX);
 
+    // 读取PS2设备类型
     type = ps2x.readType();
     switch (type) {
         case 0:
@@ -43,11 +45,12 @@ void loop() {
     Read GamePad and set vibration values
     ps2x.read_gamepad(small motor on/off, larger motor strenght from 0-255)
     if you don't enable the rumble, use ps2x.read_gamepad(); with no values
-
     you should call this at least once a second
     */
     if (error == 1)  // skip loop if no controller found
         return;
+
+    // 读取手柄的控制信号
     if (type == 2) {  // Guitar Hero Controller
         ps2x.read_gamepad();  // read controller
 
